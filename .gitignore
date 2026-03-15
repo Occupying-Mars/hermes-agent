@@ -30,6 +30,7 @@ source-data/*
 run_datagen_megascience_glm4-6.sh
 data/*
 node_modules/
+target/
 browser-use/
 agent-browser/
 # Private keys
@@ -53,3 +54,6 @@ environments/benchmarks/evals/
 
 # Release script temp files
 .release_notes.md
+
+# Rust / Tauri build artifacts
+Cargo.toml.orig

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "autoclys",
+  "version": "0.1.0",
+  "identifier": "com.nous.autoclys",
+  "build": {
+    "devUrl": "http://127.0.0.1:4310",
+    "frontendDist": "../src-ui"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "autoclys",
+        "width": 1320,
+        "height": 860,
+        "minWidth": 1080,
+        "minHeight": 700,
+        "resizable": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": false,
+    "icon": [
+      "../../../landingpage/icon-192.png",
+      "../../../landingpage/icon-512.png",
+      "../../../landingpage/favicon.ico"
+    ]
+  }
+}

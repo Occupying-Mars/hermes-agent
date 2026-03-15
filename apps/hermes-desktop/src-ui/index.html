@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>autoclys</title>
+    <link rel="stylesheet" href="./main.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      <header class="titlebar">
+        <div class="titlebar-left">
+          <button id="new-session-button" class="titlebar-btn" title="new session" type="button">new</button>
+          <button id="refresh-button" class="titlebar-btn" title="refresh" type="button">sync</button>
+        </div>
+        <div class="titlebar-center">
+          <div class="titlebar-workspace">
+            <span class="titlebar-workspace-name" id="workspace-title">autoclys workspace</span>
+          </div>
+          <span class="titlebar-title" id="session-title">session</span>
+          <span class="titlebar-title muted hidden" id="session-meta"></span>
+          <div id="session-tabs" class="tabs hidden"></div>
+        </div>
+        <div class="titlebar-right">
+          <label class="model-select-wrap">
+            <select id="model-select" class="model-select"></select>
+          </label>
+          <div class="chat-header-badge hidden" id="message-pill">0 messages</div>
+          <button id="toggle-inspector-button" class="titlebar-btn active" type="button">panel</button>
+          <button id="settings-toggle" class="titlebar-btn" type="button">cfg</button>
+        </div>
+      </header>
+
+      <div class="app-layout">
+        <aside class="thread-sidebar">
+          <div class="sidebar-tabs">
+            <button class="sidebar-tab active" type="button">threads</button>
+            <button class="sidebar-tab" type="button">memory</button>
+          </div>
+
+          <div class="thread-sidebar-header">
+            <span class="thread-sidebar-title">threads</span>
+            <div class="thread-sidebar-actions">
+              <button id="toggle-settings-button" class="titlebar-btn" title="toggle config" type="button">cfg</button>
+            </div>
+          </div>
+
+          <label class="sidebar-search">
+            <input id="session-filter" class="sidebar-search-input" type="search" placeholder="title, preview, id" />
+          </label>
+
+          <div id="sessions-list" class="thread-list"></div>
+        </aside>
+
+        <main class="chat-container">
+          <div class="chat-header">
+            <div class="chat-header-badge">autoclys</div>
+            <div class="chat-header-badge" id="chat-model-badge">model</div>
+            <div class="chat-header-badge" id="chat-messages-badge">0 messages</div>
+            <button id="rename-session-button" class="chat-header-action" type="button">rename</button>
+            <button id="delete-session-button" class="chat-header-action chat-header-action-stop" type="button">delete</button>
+          </div>
+
+          <div id="chat-empty" class="chat-empty">
+            <div class="chat-empty-icon">+</div>
+            <div class="chat-empty-title">open or create a session</div>
+            <div class="chat-empty-subtitle">each session keeps its own hermes context, messages, cwd, and tool surface.</div>
+          </div>
+
+          <div id="chat-view" class="chat-view hidden">
+            <div class="chat-messages">
+              <div id="messages" class="chat-messages-inner"></div>
+            </div>
+
+            <form id="composer" class="chat-input-container">
+              <div class="chat-input-wrapper">
+                <div class="chat-input-main-box">
+                  <div class="chat-input-textarea-wrapper">
+                    <textarea id="message-input" class="chat-input-textarea" rows="1" placeholder="ask me anything... use @{file} to include files"></textarea>
+                  </div>
+                  <div class="chat-input-controls">
+                    <div class="chat-input-controls-left">
+                      <div class="composer-chip">@</div>
+                      <div class="composer-chip accent-chip">fast</div>
+                    </div>
+                    <div class="chat-input-controls-right">
+                      <button id="send-button" class="chat-send-btn chat-send-btn-amber" type="submit">↑</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </main>
+
+        <aside class="file-sidebar" id="inspector">
+          <div class="sidebar-content inspector-content">
+            <section class="panel">
+              <div class="panel-head">
+                <h3>session</h3>
+              </div>
+              <div id="session-details" class="detail-list"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h3>tool surface</h3>
+              </div>
+              <div id="toolsets-view" class="chips"></div>
+              <div id="tools-view" class="chips tools"></div>
+            </section>
+
+            <section id="settings-panel" class="panel">
+              <div class="panel-head">
+                <h3>settings</h3>
+                <button id="save-config-button" class="chat-header-action" type="button">save config</button>
+              </div>
+              <div id="config-meta" class="muted small"></div>
+              <textarea id="config-editor" class="config-editor" spellcheck="false"></textarea>
+            </section>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <dialog id="new-session-dialog" class="modal">
+      <form method="dialog" id="new-session-form" class="modal-card">
+        <div class="modal-head">
+          <h2>new session</h2>
+          <button type="button" id="close-dialog-button" class="action-pill">close</button>
+        </div>
+
+        <label class="field stacked">
+          <span>title</span>
+          <input id="new-title" type="text" placeholder="focus sprint" />
+        </label>
+
+        <label class="field stacked">
+          <span>working directory</span>
+          <input id="new-cwd" type="text" placeholder="/users/krishna/public/experiments/hermes-agent" />
+        </label>
+
+        <label class="field stacked">
+          <span>model</span>
+          <select id="new-model"></select>
+        </label>
+
+        <label class="field stacked">
+          <span>max turns</span>
+          <input id="new-max-turns" type="number" min="1" step="1" placeholder="90" />
+        </label>
+
+        <fieldset class="toolset-picker">
+          <legend>toolsets</legend>
+          <div id="toolset-options" class="toolset-options"></div>
+        </fieldset>
+
+        <div class="modal-actions">
+          <button type="submit" class="action-pill strong">create session</button>
+        </div>
+      </form>
+    </dialog>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+  </html>
