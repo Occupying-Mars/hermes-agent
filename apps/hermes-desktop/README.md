@@ -20,5 +20,12 @@ tauri shell + local python desktop service for hermes.
 - config editor for `~/.hermes/config.yaml`
 - toolset and resolved tool surface display
 - local backend service bootstrapped by the tauri shell
+- observe mode with vito-style screen diffing, keylogger-backed text capture, hermes distraction checks, and persisted observer logs under `~/.hermes/desktop-observer/`
 
 desktop-control tools and richer streaming/intervention flows can layer on top next.
+
+## observer notes
+
+- the native keylogger addon lives in `../../autoclys_keylogger/`
+- root `npm install` now attempts to build it automatically on macos
+- if that build fails, rerun `npm --prefix autoclys_keylogger install`

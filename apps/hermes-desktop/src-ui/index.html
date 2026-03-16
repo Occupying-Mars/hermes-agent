@@ -4,6 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>autoclys</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./main.css" />
   </head>
   <body>
@@ -34,8 +37,8 @@
       <div class="app-layout">
         <aside class="thread-sidebar">
           <div class="sidebar-tabs">
-            <button class="sidebar-tab active" type="button">threads</button>
-            <button class="sidebar-tab" type="button">memory</button>
+            <button id="chat-mode-button" class="sidebar-tab active" type="button">chat</button>
+            <button id="observe-mode-button" class="sidebar-tab" type="button">observe</button>
           </div>
 
           <div class="thread-sidebar-header">
@@ -75,6 +78,17 @@
             <form id="composer" class="chat-input-container">
               <div class="chat-input-wrapper">
                 <div class="chat-input-main-box">
+                  <div class="context-strip">
+                    <label class="context-toggle" for="share-context-toggle">
+                      <input id="share-context-toggle" type="checkbox" />
+                      <span>share app context</span>
+                    </label>
+                    <div class="context-actions">
+                      <div id="context-status" class="context-status">off</div>
+                      <button id="refresh-context-button" class="context-action-btn" type="button">refresh</button>
+                    </div>
+                  </div>
+                  <div id="context-preview" class="context-preview"></div>
                   <div class="chat-input-textarea-wrapper">
                     <textarea id="message-input" class="chat-input-textarea" rows="1" placeholder="ask me anything... use @{file} to include files"></textarea>
                   </div>
@@ -90,6 +104,122 @@
                 </div>
               </div>
             </form>
+          </div>
+
+          <div id="observation-view" class="observation-view hidden">
+            <div class="observation-shell">
+              <section class="observation-hero">
+                <div class="observation-hero-top">
+                  <div>
+                    <div class="chat-header-badge">observe</div>
+                    <h2>ambient observation</h2>
+                  </div>
+                  <div id="observation-hero-state" class="observation-hero-state idle">idle</div>
+                </div>
+                <p id="observation-hero-copy">runs the vito-style monitor loop inside hermes: keylogger, fast screen capture, screenshot diffing, and hermes distraction checks.</p>
+                <div class="observation-hero-meta">
+                  <div class="observation-hero-chip">
+                    <span>model</span>
+                    <strong id="observation-model-label">moonshotai/kimi-k2</strong>
+                  </div>
+                  <div class="observation-hero-chip">
+                    <span>session</span>
+                    <strong id="observation-session-label">not started</strong>
+                  </div>
+                  <div class="observation-hero-chip">
+                    <span>last event</span>
+                    <strong id="observation-last-event">waiting</strong>
+                  </div>
+                </div>
+                <div id="observation-feedback" class="observation-feedback">idle. press start to begin observing your foreground window.</div>
+              </section>
+
+              <form id="observation-form" class="observation-form">
+                <label class="field stacked observation-goal-field">
+                  <span>goal</span>
+                  <input id="observation-goal" type="text" placeholder="study" />
+                </label>
+                <label class="field stacked observation-goal-field">
+                  <span>observer guidance</span>
+                  <textarea id="observation-guidance" rows="3" placeholder="what should count as weird, what work matters right now, when to step in"></textarea>
+                </label>
+                <div class="observation-routing">
+                  <label class="field stacked">
+                    <span>main timeline</span>
+                    <select id="observation-target-session"></select>
+                  </label>
+                  <label class="context-toggle" for="observation-auto-intervene">
+                    <input id="observation-auto-intervene" type="checkbox" checked />
+                    <span>auto step in</span>
+                  </label>
+                  <button id="observation-save-settings-button" class="titlebar-btn active" type="button">save routing</button>
+                </div>
+                <div class="observation-actions">
+                  <button id="observation-start-button" class="chat-header-action" type="button">start</button>
+                  <button id="observation-stop-button" class="chat-header-action chat-header-action-stop" type="button">stop</button>
+                  <button id="observation-check-button" class="titlebar-btn active" type="button">check now</button>
+                </div>
+              </form>
+
+              <section class="observation-panel-grid">
+                <div class="panel observation-panel">
+                  <div class="panel-head">
+                    <h3>status</h3>
+                    <div id="observation-status-pill" class="chat-header-badge">idle</div>
+                  </div>
+                  <div id="observation-summary" class="detail-list"></div>
+                </div>
+
+                <div class="panel observation-panel">
+                  <div class="panel-head">
+                    <h3>current activity</h3>
+                  </div>
+                  <div id="observation-activity" class="detail-list"></div>
+                </div>
+
+                <div class="panel observation-panel">
+                  <div class="panel-head">
+                    <h3>rollup</h3>
+                  </div>
+                  <div id="observation-stats" class="detail-list"></div>
+                </div>
+
+                <div class="panel observation-panel">
+                  <div class="panel-head">
+                    <h3>top apps</h3>
+                  </div>
+                  <div id="observation-top-apps" class="observation-list"></div>
+                </div>
+              </section>
+
+              <section class="panel observation-events-panel">
+                <div class="panel-head">
+                  <h3>recent text</h3>
+                </div>
+                <div id="observation-recent-text" class="observation-events"></div>
+              </section>
+
+              <section class="panel observation-events-panel">
+                <div class="panel-head">
+                  <h3>recent events</h3>
+                </div>
+                <div id="observation-events" class="observation-events"></div>
+              </section>
+
+              <section class="panel observation-events-panel">
+                <div class="panel-head">
+                  <h3>anomalies -> main timeline</h3>
+                </div>
+                <div id="observation-anomalies" class="observation-events"></div>
+              </section>
+
+              <section class="panel observation-events-panel">
+                <div class="panel-head">
+                  <h3>main agent actions</h3>
+                </div>
+                <div id="observation-actions" class="observation-events"></div>
+              </section>
+            </div>
           </div>
         </main>
 
@@ -108,6 +238,13 @@
               </div>
               <div id="toolsets-view" class="chips"></div>
               <div id="tools-view" class="chips tools"></div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h3>desktop actions</h3>
+              </div>
+              <div id="desktop-actions-view" class="observation-events"></div>
             </section>
 
             <section id="settings-panel" class="panel">

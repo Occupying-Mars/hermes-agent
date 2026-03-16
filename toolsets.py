@@ -202,6 +202,24 @@ TOOLSETS = {
         "includes": []
     },
 
+    "observer": {
+        "description": "observer-only escalation hooks used by autoclys' ambient monitor",
+        "tools": ["observer_raise_anomaly"],
+        "includes": []
+    },
+
+    "desktop-control": {
+        "description": "local desktop control for autoclys: screenshots, keyboard, mouse, and visible popups",
+        "tools": [
+            "desktop_capture_screen",
+            "desktop_type_text",
+            "desktop_press_keys",
+            "desktop_mouse_action",
+            "desktop_show_popup",
+        ],
+        "includes": []
+    },
+
 
     # Scenario-specific toolsets
     

@@ -73,6 +73,8 @@ def _discover_tools():
     not installed) don't prevent the rest from loading.
     """
     _modules = [
+        "tools.observer_tools",
+        "tools.desktop_control_tool",
         "tools.web_tools",
         "tools.terminal_tool",
         "tools.file_tools",

@@ -88,6 +88,8 @@ class TestBackwardCompat:
         # Should contain well-known tools
         assert "web_search" in names
         assert "terminal" in names
+        assert "observer_raise_anomaly" in names
+        assert "desktop_capture_screen" in names
 
     def test_get_toolset_for_tool(self):
         result = get_toolset_for_tool("web_search")
